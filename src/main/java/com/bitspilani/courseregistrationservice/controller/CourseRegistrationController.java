@@ -55,4 +55,14 @@ public class CourseRegistrationController {
         ErrorResponse errorResponse = new ErrorResponse("Student already registered for the course", null);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), null);
+        if (ex.getMessage().equals("Course is not registered or service unavailable") || ex.getMessage()
+            .equals("Student not found or service unavailable")) {
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

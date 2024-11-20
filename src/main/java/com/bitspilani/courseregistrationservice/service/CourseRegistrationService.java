@@ -17,7 +17,7 @@ public class CourseRegistrationService {
     @Value("${user.service.url}")
     private String userServiceUrl;
 
-    public static final String COURSES = "/courses/";
+    public static final String COURSES = "/course/checkIfCourseExists/";
     @Value("${course.service.url}")
     private String courseServiceUrl;
 
@@ -33,7 +33,7 @@ public class CourseRegistrationService {
     public CourseRegistrationDTO addRegistration(CourseRegistrationDTO courseRegistrationDTO) {
 
 //        checkIfStudentExists(courseRegistrationDTO.getStudentId());
-//        checkIfCourseExists(courseRegistrationDTO.getCourseId());
+        checkIfCourseExists(courseRegistrationDTO.getCourseId());
 
 
         CourseRegistration courseRegistration = getCourseRegistration(courseRegistrationDTO);
@@ -45,8 +45,8 @@ public class CourseRegistrationService {
         String getCourseEndpoint = StringUtils.join(courseServiceUrl, COURSES, courseId);
         ResponseEntity<Object> response = restTemplate.getForEntity(getCourseEndpoint, Object.class);
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Course not found or service unavailable");
+        if (response.getBody().toString().equals("false") || !response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Course is not registered or service unavailable");
         }
     }
 
